@@ -16,13 +16,10 @@ const worker :Workerd.Worker = (
       esModule =
         `export default {
         `  fetch(request, env, ctx) {
-        `    return fetch(env.TARGET);
+        `    return fetch(request.headers.get("Target"));
         `  }
         `}
     )
-  ],
-  bindings = [
-    ( name = "TARGET", fromEnvironment = "TARGET" )
   ],
   compatibilityDate = "2023-10-01",
 );

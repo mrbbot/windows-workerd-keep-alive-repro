@@ -26,16 +26,20 @@ function spawnWorkerd(configPath, port, env = {}) {
 }
 
 const user1 = await spawnWorkerd("user.capnp", "0", { MESSAGE: "one" });
-const proxy = await spawnWorkerd("proxy.capnp", "0", { TARGET: user1.url.href });
+const proxy = await spawnWorkerd("proxy.capnp", "0");
 
-const res1 = await fetch(proxy.url);
-console.log(await res1.text());
+const res1 = await fetch(proxy.url, { headers: { Target: user1.url.href } });
+console.log({ res1: await res1.text() }); // "one"
 
 await user1.kill();
+
 const user2 = await spawnWorkerd("user.capnp", user1.url.port, { MESSAGE: "two" });
 
-const res2 = await fetch(proxy.url);
-console.log(await res2.text());
+const res2 = await fetch(proxy.url, { headers: { Target: user1.url.href } });
+console.log({ res2: await res2.text() }); // Internal Server Error, expected "two"
+
+const res3 = await fetch(proxy.url, { headers: { Target: user1.url.href } });
+console.log({ res3: await res3.text() }); // "two"
 
 await user2.kill();
 await proxy.kill();
