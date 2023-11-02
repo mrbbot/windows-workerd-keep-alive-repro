@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "workerd": "^1.20231030.0"
+  }
+}
